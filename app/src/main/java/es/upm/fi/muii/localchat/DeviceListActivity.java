@@ -16,14 +16,15 @@
 
 package es.upm.fi.muii.localchat;
 
-import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTabHost;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -42,7 +43,7 @@ import BluetoothManager.BluetoothDiscoverer;
  * by the user, the MAC address of the device is sent back to the parent
  * Activity in the result Intent.
  */
-public class DeviceListActivity extends Activity {
+public class DeviceListActivity extends FragmentActivity {
 
     /**
      * Tag for Log
@@ -60,6 +61,7 @@ public class DeviceListActivity extends Activity {
      * Newly discovered devices
      */
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
+    private FragmentTabHost tabHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +69,17 @@ public class DeviceListActivity extends Activity {
 
         // Setup the window
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.chat_tab);
+        setContentView(R.layout.activity_main);
+
+        tabHost= (FragmentTabHost) findViewById(android.R.id.tabhost);
+        tabHost.setup(this, getSupportFragmentManager(),android.R.id.tabcontent);
+        tabHost.addTab(tabHost.newTabSpec("settings_tab").setIndicator("Ajustes"), SettingsTab.class, null);
+        tabHost.addTab(tabHost.newTabSpec("chat_tab").setIndicator("Chat"), DeviceListActivity.class, null);
+        tabHost.addTab(tabHost.newTabSpec("profile_tab").setIndicator("Perfil"), ProfileTab.class, null);
+        tabHost.addTab(tabHost.newTabSpec("map_tab").setIndicator("Mapa"), MapTab.class, null);
 
         // Set result CANCELED in case the user backs out
-        setResult(Activity.RESULT_CANCELED);
+        setResult(FragmentActivity.RESULT_CANCELED);
 
         // Initialize array adapters. One for already paired devices and
         // one for newly discovered devices
@@ -153,7 +162,7 @@ public class DeviceListActivity extends Activity {
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
             // Set result and finish this Activity
-            setResult(Activity.RESULT_OK, intent);
+            setResult(FragmentActivity.RESULT_OK, intent);
             finish();
         }
     };
