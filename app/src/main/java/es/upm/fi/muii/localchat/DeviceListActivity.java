@@ -67,7 +67,7 @@ public class DeviceListActivity extends Activity {
 
         // Setup the window
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.chat_tab);
 
         // Set result CANCELED in case the user backs out
         setResult(Activity.RESULT_CANCELED);

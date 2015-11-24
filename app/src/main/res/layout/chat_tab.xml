@@ -38,5 +38,11 @@
                 android:layout_weight="1"
                 android:stackFromBottom="true"
                 />
+
+            <ListView
+                android:id="@+id/other_devices"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
         </LinearLayout>
     </LinearLayout>
