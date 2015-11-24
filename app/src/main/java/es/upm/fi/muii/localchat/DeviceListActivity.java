@@ -17,6 +17,7 @@
 package es.upm.fi.muii.localchat;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.bluetooth.BluetoothAdapter;
@@ -72,11 +73,18 @@ public class DeviceListActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         tabHost= (FragmentTabHost) findViewById(android.R.id.tabhost);
-        tabHost.setup(this, getSupportFragmentManager(),android.R.id.tabcontent);
+        tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
         tabHost.addTab(tabHost.newTabSpec("settings_tab").setIndicator("Ajustes"), SettingsTab.class, null);
-        tabHost.addTab(tabHost.newTabSpec("chat_tab").setIndicator("Chat"), DeviceListActivity.class, null);
+        tabHost.addTab(tabHost.newTabSpec("chat_tab").setIndicator("Chat"), ChatTab.class, null);
         tabHost.addTab(tabHost.newTabSpec("profile_tab").setIndicator("Perfil"), ProfileTab.class, null);
         tabHost.addTab(tabHost.newTabSpec("map_tab").setIndicator("Mapa"), MapTab.class, null);
+    }
+
+    protected void onStart () {
+
+        super.onStart();
+
+        ChatTab chatTab = (ChatTab) getSupportFragmentManager().findFragmentByTag("chat_tab");
 
         // Set result CANCELED in case the user backs out
         setResult(FragmentActivity.RESULT_CANCELED);
@@ -88,7 +96,7 @@ public class DeviceListActivity extends FragmentActivity {
         mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
 
         // Find and set up the ListView for paired devices
-        ListView pairedListView = (ListView) findViewById(R.id.paired_devices);
+        ListView pairedListView = (ListView) chatTab.getView().findViewById(R.id.paired_devices);
         pairedListView.setAdapter(pairedDevicesArrayAdapter);
         pairedListView.setOnItemClickListener(mDeviceClickListener);
 
@@ -98,7 +106,7 @@ public class DeviceListActivity extends FragmentActivity {
 
         // If there are paired devices, add each one to the ArrayAdapter
         if (pairedDevices.size() > 0) {
-            findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
+            chatTab.getView().findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
                 pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
@@ -108,7 +116,6 @@ public class DeviceListActivity extends FragmentActivity {
         }
 
         doDiscovery();
-
     }
 
 
