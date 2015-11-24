@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package es.upm.fi.muii.localchat;
+package BluetoothManager;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
+
+import es.upm.fi.muii.localchat.Constants;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
