@@ -3,46 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+
     <TextView
-    android:id="@+id/text"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_vertical|center_horizontal"
-    android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:id="@+id/title_paired_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#666"
+        android:text="@string/title_paired_devices"
+        android:textColor="#fff"
+        android:visibility="gone"
+        />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
+    <ListView
+        android:id="@+id/paired_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:stackFromBottom="true"
+        />
 
-            <TextView
-                android:id="@+id/title_paired_devices"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#666"
-                android:text="@string/title_paired_devices"
-                android:textColor="#fff"
-                android:visibility="gone"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="esadadada"
-                android:id="@+id/textView" />
-
-            <ListView
-                android:id="@+id/paired_devices"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:stackFromBottom="true"
-                />
-
-            <ListView
-                android:id="@+id/other_devices"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-        </LinearLayout>
-    </LinearLayout>
+    <ListView
+        android:id="@+id/other_devices"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+</LinearLayout>

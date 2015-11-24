@@ -17,20 +17,19 @@
 package es.upm.fi.muii.localchat;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTabHost;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,7 +43,7 @@ import BluetoothManager.BluetoothDiscoverer;
  * by the user, the MAC address of the device is sent back to the parent
  * Activity in the result Intent.
  */
-public class DeviceListActivity extends FragmentActivity {
+public class DeviceListActivity extends Fragment {
 
     /**
      * Tag for Log
@@ -62,41 +61,37 @@ public class DeviceListActivity extends FragmentActivity {
      * Newly discovered devices
      */
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
-    private FragmentTabHost tabHost;
+
+    private FragmentActivity mainActivity;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Setup the window
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.activity_main);
-
-        tabHost= (FragmentTabHost) findViewById(android.R.id.tabhost);
-        tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
-        tabHost.addTab(tabHost.newTabSpec("settings_tab").setIndicator("Ajustes"), SettingsTab.class, null);
-        tabHost.addTab(tabHost.newTabSpec("chat_tab").setIndicator("Chat"), ChatTab.class, null);
-        tabHost.addTab(tabHost.newTabSpec("profile_tab").setIndicator("Perfil"), ProfileTab.class, null);
-        tabHost.addTab(tabHost.newTabSpec("map_tab").setIndicator("Mapa"), MapTab.class, null);
     }
 
-    protected void onStart () {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        super.onStart();
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        ChatTab chatTab = (ChatTab) getSupportFragmentManager().findFragmentByTag("chat_tab");
+        View view = inflater.inflate(R.layout.chat_tab, container, false);
+
+        mainActivity = getActivity();
+
 
         // Set result CANCELED in case the user backs out
-        setResult(FragmentActivity.RESULT_CANCELED);
+        mainActivity.setResult(FragmentActivity.RESULT_CANCELED);
 
         // Initialize array adapters. One for already paired devices and
         // one for newly discovered devices
         ArrayAdapter<String> pairedDevicesArrayAdapter =
-                new ArrayAdapter<String>(this, R.layout.device_name);
-        mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
+                new ArrayAdapter<String>(mainActivity, R.layout.device_name);
+        mNewDevicesArrayAdapter = new ArrayAdapter<String>(mainActivity, R.layout.device_name);
 
         // Find and set up the ListView for paired devices
-        ListView pairedListView = (ListView) chatTab.getView().findViewById(R.id.paired_devices);
+        ListView pairedListView = (ListView) view.findViewById(R.id.paired_devices);
         pairedListView.setAdapter(pairedDevicesArrayAdapter);
         pairedListView.setOnItemClickListener(mDeviceClickListener);
 
@@ -106,7 +101,7 @@ public class DeviceListActivity extends FragmentActivity {
 
         // If there are paired devices, add each one to the ArrayAdapter
         if (pairedDevices.size() > 0) {
-            chatTab.getView().findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
                 pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
@@ -116,8 +111,9 @@ public class DeviceListActivity extends FragmentActivity {
         }
 
         doDiscovery();
-    }
 
+        return view;
+    }
 
     /**
      * Start device discover with the BluetoothAdapter
@@ -125,8 +121,8 @@ public class DeviceListActivity extends FragmentActivity {
     private void doDiscovery() {
 
         // Indicate scanning in the title
-        setProgressBarIndeterminateVisibility(true);
-        setTitle(R.string.scanning);
+        mainActivity.setProgressBarIndeterminateVisibility(true);
+        mainActivity.setTitle(R.string.scanning);
 /*
         // If we're already discovering, stop it
         if (mBtAdapter.isDiscovering()) {
@@ -138,7 +134,7 @@ public class DeviceListActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
         // Make sure we're not doing discovery anymore
@@ -147,7 +143,7 @@ public class DeviceListActivity extends FragmentActivity {
         }
 
         // Unregister broadcast listeners
-        this.unregisterReceiver(mReceiver);
+        mainActivity.unregisterReceiver(mReceiver);
     }
 
 
@@ -169,8 +165,8 @@ public class DeviceListActivity extends FragmentActivity {
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
             // Set result and finish this Activity
-            setResult(FragmentActivity.RESULT_OK, intent);
-            finish();
+            mainActivity.setResult(FragmentActivity.RESULT_OK, intent);
+            mainActivity.finish();
         }
     };
 
@@ -193,8 +189,8 @@ public class DeviceListActivity extends FragmentActivity {
                 }
                 // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                setProgressBarIndeterminateVisibility(false);
-                setTitle(R.string.select_device);
+                mainActivity.setProgressBarIndeterminateVisibility(false);
+                mainActivity.setTitle(R.string.select_device);
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
                     String noDevices = getResources().getText(R.string.none_found).toString();
                     mNewDevicesArrayAdapter.add(noDevices);
