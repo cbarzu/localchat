@@ -20,30 +20,4 @@
             android:layout_weight="1" />
     </LinearLayout>
 </android.support.v4.app.FragmentTabHost>
-    android:orientation="vertical"
-    >
 
-    <TextView
-        android:id="@+id/title_paired_devices"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#666"
-        android:text="@string/title_paired_devices"
-        android:textColor="#fff"
-        android:visibility="gone"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="esadadada"
-        android:id="@+id/textView" />
-
-    <ListView
-        android:id="@+id/paired_devices"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:stackFromBottom="true"
-        />
-</LinearLayout>
