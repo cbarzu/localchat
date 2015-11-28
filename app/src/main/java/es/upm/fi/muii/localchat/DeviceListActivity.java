@@ -16,6 +16,7 @@
 
 package es.upm.fi.muii.localchat;
 
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -24,6 +25,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +66,8 @@ public class DeviceListActivity extends Fragment {
 
     private FragmentActivity mainActivity;
 
+    private BluetoothAdapter mBtAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,15 +80,24 @@ public class DeviceListActivity extends Fragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
+        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+
         View view = inflater.inflate(R.layout.chat_tab, container, false);
 
         mainActivity = getActivity();
+        // Register for broadcasts when a device is discovered
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        mainActivity.registerReceiver(mReceiver, filter);
 
-
+        // Register for broadcasts when discovery has finished
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        mainActivity.registerReceiver(mReceiver, filter);
+        doDiscovery();
         // Set result CANCELED in case the user backs out
         mainActivity.setResult(FragmentActivity.RESULT_CANCELED);
 
         // Initialize array adapters. One for already paired devices and
+        // one for newly discovered devices
         // one for newly discovered devices
         ArrayAdapter<String> pairedDevicesArrayAdapter =
                 new ArrayAdapter<String>(mainActivity, R.layout.device_name);
@@ -94,6 +107,11 @@ public class DeviceListActivity extends Fragment {
         ListView pairedListView = (ListView) view.findViewById(R.id.paired_devices);
         pairedListView.setAdapter(pairedDevicesArrayAdapter);
         pairedListView.setOnItemClickListener(mDeviceClickListener);
+
+        // Find and set up the ListView for paired devices
+        ListView otherDevicesView = (ListView) view.findViewById(R.id.new_devices);
+        otherDevicesView.setAdapter(mNewDevicesArrayAdapter);
+        otherDevicesView.setOnItemClickListener(mDeviceClickListener);
 
         bd = new BluetoothDiscoverer();
         // Get a set of currently paired devices
@@ -115,6 +133,11 @@ public class DeviceListActivity extends Fragment {
         return view;
     }
 
+    /*@Override
+    public void onResume() {
+        doDiscovery();
+    }*/
+
     /**
      * Start device discover with the BluetoothAdapter
      */
@@ -123,14 +146,14 @@ public class DeviceListActivity extends Fragment {
         // Indicate scanning in the title
         mainActivity.setProgressBarIndeterminateVisibility(true);
         mainActivity.setTitle(R.string.scanning);
-/*
+
         // If we're already discovering, stop it
         if (mBtAdapter.isDiscovering()) {
             mBtAdapter.cancelDiscovery();
         }
 
         // Request discover from BluetoothAdapter
-        mBtAdapter.startDiscovery();*/
+        mBtAdapter.startDiscovery();
     }
 
     @Override
@@ -139,7 +162,7 @@ public class DeviceListActivity extends Fragment {
 
         // Make sure we're not doing discovery anymore
         if (bd != null) {
-            bd.cancelDiscovery();
+            mBtAdapter.cancelDiscovery();
         }
 
         // Unregister broadcast listeners
@@ -154,19 +177,19 @@ public class DeviceListActivity extends Fragment {
             = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
             // Cancel discovery because it's costly and we're about to connect
-            bd.cancelDiscovery();
+            mBtAdapter.cancelDiscovery();
 
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
-
+        /*
             // Create the result Intent and include the MAC address
             Intent intent = new Intent();
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
             // Set result and finish this Activity
             mainActivity.setResult(FragmentActivity.RESULT_OK, intent);
-            mainActivity.finish();
+            mainActivity.finish();*/
         }
     };
 
@@ -186,6 +209,7 @@ public class DeviceListActivity extends Fragment {
                 // If it's already paired, skip it, because it's been listed already
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                     mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    Log.e(TAG, "Find " + device.getName() + "\n" + device.getAddress());
                 }
                 // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
