@@ -32,9 +32,6 @@ public class BluetoothDiscoverer {
         return pairedDevices;
     }
 
-    public void cancelDiscovery(){
-        mBtAdapter.cancelDiscovery();
-    }
 
 
 
