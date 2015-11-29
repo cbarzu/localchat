@@ -4,8 +4,6 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,11 +15,9 @@ import es.upm.fi.muii.localchat.R;
 
 public class ChatView extends FragmentActivity {
 
-    private ListView listView;
     private Conversation conversation;
     private EditText editText;
     private Calendar calendar;
-    private Button sendButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +26,14 @@ public class ChatView extends FragmentActivity {
 
         calendar = Calendar.getInstance();
 
-        listView = (ListView) findViewById(R.id.messageList);
+        ListView listView = (ListView) findViewById(R.id.messageList);
         conversation = new Conversation(getApplicationContext(), R.layout.item_conversation);
 
         listView.setAdapter(conversation);
 
         editText = (EditText) findViewById(R.id.editText);
 
-        sendButton = (Button) findViewById(R.id.button_send);
+        Button sendButton = (Button) findViewById(R.id.button_send);
 
         setupWatcher(editText, sendButton);
     }

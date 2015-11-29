@@ -12,23 +12,15 @@ import android.view.ViewGroup;
 public class MapTab extends Fragment {
 
     @Override
-
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
     }
 
-
-
     @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-
                              Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.map_tab, container, false);
-
     }
-
 }

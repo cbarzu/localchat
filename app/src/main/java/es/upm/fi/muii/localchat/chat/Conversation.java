@@ -9,7 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import es.upm.fi.muii.localchat.R;
@@ -20,9 +22,7 @@ import es.upm.fi.muii.localchat.R;
 public class Conversation extends ArrayAdapter<Message> {
 
     private List<Message> messages;
-    private LinearLayout itemLayout;
-    private TextView itemMessage;
-    private TextView itemOwner;
+
 
     public Conversation(Context contexto, int textViewId) {
 
@@ -59,20 +59,23 @@ public class Conversation extends ArrayAdapter<Message> {
             row = inflater.inflate(R.layout.item_conversation, parent, false);
         }
 
-        itemLayout = (LinearLayout) row.findViewById(R.id.wrapper);
-        itemMessage = (TextView) row.findViewById(R.id.message);
-        itemOwner = (TextView) row.findViewById(R.id.owner);
+        LinearLayout itemLayout = (LinearLayout) row.findViewById(R.id.item);
+        LinearLayout itemWrapper = (LinearLayout) row.findViewById(R.id.wrapper);
+        TextView itemMessage = (TextView) row.findViewById(R.id.message);
+        TextView itemOwner = (TextView) row.findViewById(R.id.owner);
 
         Message message = getItem(position);
 
         boolean sent = (message.getWriter() > 0);
 
-        itemLayout.setGravity(!sent ? Gravity.LEFT : Gravity.RIGHT);
-        itemLayout.setBackgroundResource(sent ? R.drawable.bubble_yellow : R.drawable.bubble_blue);
+        itemLayout.setGravity((sent ? Gravity.START : Gravity.END));
+        itemWrapper.setBackgroundResource(sent ? R.drawable.bubble_yellow : R.drawable.bubble_blue);
+        itemWrapper.setGravity((sent ? Gravity.START : Gravity.END));
         itemMessage.setText(message.getMessage());
-        itemMessage.setGravity(sent ? Gravity.LEFT : Gravity.RIGHT);
-        itemOwner.setText(sent ? "Él" : "Yo");
-        itemOwner.setGravity(sent ? Gravity.LEFT : Gravity.RIGHT);
+
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        String date = format.format(new Date(message.getTimestamp()));
+        itemOwner.setText((sent ? "Él" : "Yo" ) + " - " + date);
 
         return row;
     }
