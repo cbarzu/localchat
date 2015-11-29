@@ -38,6 +38,7 @@ import android.widget.TextView;
 import java.util.Set;
 
 import BluetoothManager.BluetoothDiscoverer;
+import es.upm.fi.muii.localchat.chat.ChatView;
 
 /**
  * This Activity appears as a dialog. It lists any paired devices and
@@ -113,17 +114,29 @@ public class DeviceListActivity extends Fragment {
         otherDevicesView.setAdapter(mNewDevicesArrayAdapter);
         otherDevicesView.setOnItemClickListener(mDeviceClickListener);
 
+        // Register for broadcasts when a device is discovered
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        mainActivity.registerReceiver(mReceiver, filter);
+
+        // Register for broadcasts when discovery has finished
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        mainActivity.registerReceiver(mReceiver, filter);
+
         bd = new BluetoothDiscoverer();
         // Get a set of currently paired devices
         Set<BluetoothDevice> pairedDevices = bd.getPairedDevices();
 
         // If there are paired devices, add each one to the ArrayAdapter
         if (pairedDevices.size() > 0) {
+
             view.findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
+
                 pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
+
         } else {
+
             String noDevices = getResources().getText(R.string.none_paired).toString();
             pairedDevicesArrayAdapter.add(noDevices);
         }
@@ -152,7 +165,7 @@ public class DeviceListActivity extends Fragment {
             mBtAdapter.cancelDiscovery();
         }
 
-        // Request discover from BluetoothAdapter
+
         mBtAdapter.startDiscovery();
     }
 
@@ -167,6 +180,8 @@ public class DeviceListActivity extends Fragment {
 
         // Unregister broadcast listeners
         mainActivity.unregisterReceiver(mReceiver);
+
+        super.onDestroy();
     }
 
 
@@ -175,6 +190,7 @@ public class DeviceListActivity extends Fragment {
      */
     private AdapterView.OnItemClickListener mDeviceClickListener
             = new AdapterView.OnItemClickListener() {
+
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
             // Cancel discovery because it's costly and we're about to connect
             mBtAdapter.cancelDiscovery();
@@ -184,12 +200,16 @@ public class DeviceListActivity extends Fragment {
             String address = info.substring(info.length() - 17);
         /*
             // Create the result Intent and include the MAC address
+            Intent intent = new Intent(mainActivity, ChatView.class);
             Intent intent = new Intent();
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
+            // Set chat parameters key:value (MAC address, etc)
+            intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            startActivity(intent);
             // Set result and finish this Activity
-            mainActivity.setResult(FragmentActivity.RESULT_OK, intent);
-            mainActivity.finish();*/
+           // mainActivity.setResult(FragmentActivity.RESULT_OK, intent);
+           // mainActivity.finish();
         }
     };
 
@@ -198,6 +218,7 @@ public class DeviceListActivity extends Fragment {
      * discovery is finished
      */
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
