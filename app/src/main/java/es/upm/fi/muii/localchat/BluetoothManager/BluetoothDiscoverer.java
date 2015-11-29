@@ -1,4 +1,4 @@
-package BluetoothManager;
+package es.upm.fi.muii.localchat.BluetoothManager;
 
 /**
  * Created by claudiu on 17/11/2015.
@@ -7,7 +7,6 @@ package BluetoothManager;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 
 import java.util.Set;
 
@@ -32,8 +31,14 @@ public class BluetoothDiscoverer {
         return pairedDevices;
     }
 
+    public boolean doDiscovery() {
 
+        return mBtAdapter.startDiscovery();
+    }
 
+    public boolean cancelDiscovery() {
 
+       return mBtAdapter.cancelDiscovery();
+    }
 
 }

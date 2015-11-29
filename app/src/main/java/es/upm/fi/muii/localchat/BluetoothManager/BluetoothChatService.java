@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package BluetoothManager;
+package es.upm.fi.muii.localchat.BluetoothManager;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

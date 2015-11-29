@@ -29,7 +29,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -37,7 +36,7 @@ import android.widget.TextView;
 
 import java.util.Set;
 
-import BluetoothManager.BluetoothDiscoverer;
+import es.upm.fi.muii.localchat.BluetoothManager.BluetoothDiscoverer;
 import es.upm.fi.muii.localchat.chat.ChatView;
 
 /**
@@ -67,12 +66,10 @@ public class DeviceListActivity extends Fragment {
 
     private FragmentActivity mainActivity;
 
-    private BluetoothAdapter mBtAdapter;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -80,8 +77,6 @@ public class DeviceListActivity extends Fragment {
                              Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
-
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
         View view = inflater.inflate(R.layout.chat_tab, container, false);
 
@@ -93,7 +88,7 @@ public class DeviceListActivity extends Fragment {
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         mainActivity.registerReceiver(mReceiver, filter);
-        doDiscovery();
+
         // Set result CANCELED in case the user backs out
         mainActivity.setResult(FragmentActivity.RESULT_CANCELED);
 
@@ -101,8 +96,8 @@ public class DeviceListActivity extends Fragment {
         // one for newly discovered devices
         // one for newly discovered devices
         ArrayAdapter<String> pairedDevicesArrayAdapter =
-                new ArrayAdapter<String>(mainActivity, R.layout.device_name);
-        mNewDevicesArrayAdapter = new ArrayAdapter<String>(mainActivity, R.layout.device_name);
+                new ArrayAdapter<>(mainActivity, R.layout.device_name);
+        mNewDevicesArrayAdapter = new ArrayAdapter<>(mainActivity, R.layout.device_name);
 
         // Find and set up the ListView for paired devices
         ListView pairedListView = (ListView) view.findViewById(R.id.paired_devices);
@@ -114,15 +109,8 @@ public class DeviceListActivity extends Fragment {
         otherDevicesView.setAdapter(mNewDevicesArrayAdapter);
         otherDevicesView.setOnItemClickListener(mDeviceClickListener);
 
-        // Register for broadcasts when a device is discovered
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        mainActivity.registerReceiver(mReceiver, filter);
-
-        // Register for broadcasts when discovery has finished
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        mainActivity.registerReceiver(mReceiver, filter);
-
         bd = new BluetoothDiscoverer();
+
         // Get a set of currently paired devices
         Set<BluetoothDevice> pairedDevices = bd.getPairedDevices();
 
@@ -156,26 +144,16 @@ public class DeviceListActivity extends Fragment {
      */
     private void doDiscovery() {
 
-        // Indicate scanning in the title
-        mainActivity.setProgressBarIndeterminateVisibility(true);
-        mainActivity.setTitle(R.string.scanning);
-
-        // If we're already discovering, stop it
-        if (mBtAdapter.isDiscovering()) {
-            mBtAdapter.cancelDiscovery();
-        }
-
-
-        mBtAdapter.startDiscovery();
+        bd.doDiscovery();
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
 
         // Make sure we're not doing discovery anymore
         if (bd != null) {
-            mBtAdapter.cancelDiscovery();
+
+            bd.cancelDiscovery();
         }
 
         // Unregister broadcast listeners
@@ -192,17 +170,16 @@ public class DeviceListActivity extends Fragment {
             = new AdapterView.OnItemClickListener() {
 
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+
             // Cancel discovery because it's costly and we're about to connect
-            mBtAdapter.cancelDiscovery();
+            bd.cancelDiscovery();
 
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
-        /*
+
             // Create the result Intent and include the MAC address
             Intent intent = new Intent(mainActivity, ChatView.class);
-            Intent intent = new Intent();
-            intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
             // Set chat parameters key:value (MAC address, etc)
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
@@ -225,18 +202,21 @@ public class DeviceListActivity extends Fragment {
 
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // If it's already paired, skip it, because it's been listed already
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+
                     mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                     Log.e(TAG, "Find " + device.getName() + "\n" + device.getAddress());
                 }
                 // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+
                 mainActivity.setProgressBarIndeterminateVisibility(false);
-                mainActivity.setTitle(R.string.select_device);
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
+
                     String noDevices = getResources().getText(R.string.none_found).toString();
                     mNewDevicesArrayAdapter.add(noDevices);
                 }

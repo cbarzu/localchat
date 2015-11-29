@@ -16,7 +16,7 @@
 
 package es.upm.fi.muii.localchat;
 
-import BluetoothManager.BluetoothChatService;
+import es.upm.fi.muii.localchat.BluetoothManager.BluetoothChatService;
 
 /**
  * Defines several constants used between {@link BluetoothChatService} and the UI.
