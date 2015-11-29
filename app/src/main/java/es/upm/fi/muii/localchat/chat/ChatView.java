@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -34,21 +35,15 @@ public class ChatView extends FragmentActivity {
         listView.setAdapter(conversation);
 
         editText = (EditText) findViewById(R.id.editText);
-        editText.setOnKeyListener(new OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on key press
-                    conversation.add(new Message(0L, editText.getText().toString(), calendar.getTimeInMillis()));
-                    editText.setText("");
-                    return true;
-                }
-                return false;
-            }
-        });
-
     }
 
+    public void sendMessage(View button) {
+
+        if (editText.getText().length() > 0) {
+            conversation.add(new Message(0L, editText.getText().toString(), calendar.getTimeInMillis()));
+            editText.setText("");
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

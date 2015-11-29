@@ -20,8 +20,9 @@ import es.upm.fi.muii.localchat.R;
 public class Conversation extends ArrayAdapter<Message> {
 
     private List<Message> messages;
-    private LinearLayout wrapper;
-    private TextView itemLayout;
+    private LinearLayout itemLayout;
+    private TextView itemMessage;
+    private TextView itemOwner;
 
     public Conversation(Context contexto, int textViewId) {
 
@@ -58,16 +59,20 @@ public class Conversation extends ArrayAdapter<Message> {
             row = inflater.inflate(R.layout.item_conversation, parent, false);
         }
 
-        wrapper = (LinearLayout) row.findViewById(R.id.wrapper);
-        itemLayout = (TextView) row.findViewById(R.id.message);
+        itemLayout = (LinearLayout) row.findViewById(R.id.wrapper);
+        itemMessage = (TextView) row.findViewById(R.id.message);
+        itemOwner = (TextView) row.findViewById(R.id.owner);
 
         Message message = getItem(position);
 
         boolean sent = (message.getWriter() > 0);
 
-        itemLayout.setText(message.getMessage() + "\n" + (sent ? "Él" : "Yo"));
+        itemLayout.setGravity(sent ? Gravity.LEFT : Gravity.RIGHT);
         itemLayout.setBackgroundResource(sent ? R.drawable.bubble_yellow : R.drawable.bubble_blue);
-        wrapper.setGravity(sent ? Gravity.LEFT : Gravity.RIGHT);
+        itemMessage.setText(message.getMessage());
+        itemMessage.setGravity(sent ? Gravity.LEFT : Gravity.RIGHT);
+        itemOwner.setText(sent ? "Él" : "Yo");
+        itemOwner.setGravity(sent ? Gravity.LEFT : Gravity.RIGHT);
 
         return row;
     }
