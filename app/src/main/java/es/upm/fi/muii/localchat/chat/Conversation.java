@@ -67,7 +67,7 @@ public class Conversation extends ArrayAdapter<Message> {
 
         boolean sent = (message.getWriter() > 0);
 
-        itemLayout.setGravity(sent ? Gravity.LEFT : Gravity.RIGHT);
+        itemLayout.setGravity(!sent ? Gravity.LEFT : Gravity.RIGHT);
         itemLayout.setBackgroundResource(sent ? R.drawable.bubble_yellow : R.drawable.bubble_blue);
         itemMessage.setText(message.getMessage());
         itemMessage.setGravity(sent ? Gravity.LEFT : Gravity.RIGHT);
