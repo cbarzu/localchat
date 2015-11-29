@@ -36,7 +36,6 @@ import android.widget.TextView;
 
 import java.util.Set;
 
-import es.upm.fi.muii.localchat.BluetoothManager.BluetoothDiscoverer;
 import es.upm.fi.muii.localchat.chat.ChatView;
 
 /**
@@ -57,7 +56,7 @@ public class DeviceListActivity extends Fragment {
      */
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
-    private BluetoothDiscoverer bd;
+    private BluetoothAdapter bManager;
 
     /**
      * Newly discovered devices
@@ -81,13 +80,7 @@ public class DeviceListActivity extends Fragment {
         View view = inflater.inflate(R.layout.chat_tab, container, false);
 
         mainActivity = getActivity();
-        // Register for broadcasts when a device is discovered
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        mainActivity.registerReceiver(mReceiver, filter);
-
-        // Register for broadcasts when discovery has finished
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        mainActivity.registerReceiver(mReceiver, filter);
+        setupBluetooth();
 
         // Set result CANCELED in case the user backs out
         mainActivity.setResult(FragmentActivity.RESULT_CANCELED);
@@ -104,15 +97,13 @@ public class DeviceListActivity extends Fragment {
         pairedListView.setAdapter(pairedDevicesArrayAdapter);
         pairedListView.setOnItemClickListener(mDeviceClickListener);
 
-        // Find and set up the ListView for paired devices
+        // Find and set up the ListView for new devices
         ListView otherDevicesView = (ListView) view.findViewById(R.id.new_devices);
         otherDevicesView.setAdapter(mNewDevicesArrayAdapter);
         otherDevicesView.setOnItemClickListener(mDeviceClickListener);
 
-        bd = new BluetoothDiscoverer();
-
         // Get a set of currently paired devices
-        Set<BluetoothDevice> pairedDevices = bd.getPairedDevices();
+        Set<BluetoothDevice> pairedDevices = bManager.getBondedDevices();
 
         // If there are paired devices, add each one to the ArrayAdapter
         if (pairedDevices.size() > 0) {
@@ -134,6 +125,19 @@ public class DeviceListActivity extends Fragment {
         return view;
     }
 
+    private void setupBluetooth() {
+
+        bManager = BluetoothAdapter.getDefaultAdapter();
+
+        // Register for broadcasts when a device is discovered
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        mainActivity.registerReceiver(mReceiver, filter);
+
+        // Register for broadcasts when discovery has finished
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        mainActivity.registerReceiver(mReceiver, filter);
+    }
+
     /*@Override
     public void onResume() {
         doDiscovery();
@@ -144,16 +148,16 @@ public class DeviceListActivity extends Fragment {
      */
     private void doDiscovery() {
 
-        bd.doDiscovery();
+        bManager.startDiscovery();
     }
 
     @Override
     public void onDestroy() {
 
         // Make sure we're not doing discovery anymore
-        if (bd != null) {
+        if (bManager != null) {
 
-            bd.cancelDiscovery();
+            bManager.cancelDiscovery();
         }
 
         // Unregister broadcast listeners
@@ -172,7 +176,7 @@ public class DeviceListActivity extends Fragment {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
 
             // Cancel discovery because it's costly and we're about to connect
-            bd.cancelDiscovery();
+            bManager.cancelDiscovery();
 
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
@@ -184,9 +188,6 @@ public class DeviceListActivity extends Fragment {
             // Set chat parameters key:value (MAC address, etc)
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
             startActivity(intent);
-            // Set result and finish this Activity
-           // mainActivity.setResult(FragmentActivity.RESULT_OK, intent);
-           // mainActivity.finish();
         }
     };
 
