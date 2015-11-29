@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="http://schemas.android.com/tools">
+    <string name="app_name">Localchat</string>
+    <string name="action_settings">Ajuste</string>
+    <string name="bt_not_enabled_leaving">Bluetooth no esta activado. Abandonando el chat.</string>
+    <string name="button_scan">Buscar dispositivos</string>
+    <string name="discoverable">Hacer visible para otros dispositivos</string>
+    <string name="insecure_connect">Conectar a un dispositivo - Inseguro</string>
+    <string name="none_found">No se encontraron nuevos dispositivos</string>
+    <string name="none_paired">No hay dispositivos enlazados</string>
+    <string name="not_connected">No esta conectado a ningun dispositivo</string>
+    <string name="scanning">Buscando dispositivos...</string>
+    <string name="secure_connect">Conectar a un dispositivo - Seguro</string>
+    <string name="select_device">Seleccionar dispositivo a conectar</string>
+    <string name="send">Enviar</string>
+    <string name="title_activity_chat_view">Conversacion con </string>
+    <string name="title_connecting">Conectando...</string>
+    <string name="title_not_connected">No conectado</string>
+    <string name="title_other_devices">Otros dispositivos disponibles</string>
+    <string name="title_paired_devices">Dispositivos enlazados</string>
+    <string name="title_connected_to">Conectado a <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="action_chat">Chat</string>
+    <string name="action_map">Mapa</string>
+    <string name="action_profile">Perfil</string>
+</resources>

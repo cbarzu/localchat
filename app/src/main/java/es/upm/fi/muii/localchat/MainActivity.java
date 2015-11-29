@@ -23,10 +23,18 @@ public class MainActivity extends FragmentActivity {
 
         tabHost= (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
-        tabHost.addTab(tabHost.newTabSpec("settings_tab").setIndicator("Ajustes"), SettingsTab.class, null);
-        tabHost.addTab(tabHost.newTabSpec("chat_tab").setIndicator("Chat"), DeviceListActivity.class, null);
-        tabHost.addTab(tabHost.newTabSpec("profile_tab").setIndicator("Perfil"), ProfileTab.class, null);
-        tabHost.addTab(tabHost.newTabSpec("map_tab").setIndicator("Mapa"), MapTab.class, null);
+        tabHost.addTab(tabHost.newTabSpec("settings_tab")
+                              .setIndicator(getResources().getText(R.string.action_settings).toString()),
+                                            SettingsTab.class, null);
+        tabHost.addTab(tabHost.newTabSpec("chat_tab")
+                              .setIndicator(getResources().getText(R.string.action_chat).toString()),
+                                            DeviceListActivity.class, null);
+        tabHost.addTab(tabHost.newTabSpec("profile_tab")
+                              .setIndicator(getResources().getText(R.string.action_profile).toString()),
+                                            ProfileTab.class, null);
+        tabHost.addTab(tabHost.newTabSpec("map_tab")
+                              .setIndicator(getResources().getText(R.string.action_map).toString()),
+                                            MapTab.class, null);
 
         ft.commit();
     }
