@@ -19,34 +19,34 @@ import es.upm.fi.muii.localchat.R;
 /**
  * Created by Titanium on 22/11/15.
  */
-public class Conversation extends ArrayAdapter<Message> {
+public class Conversation extends ArrayAdapter<ChatMessage> {
 
-    private List<Message> messages;
+    private List<ChatMessage> chatMessages;
 
 
     public Conversation(Context contexto, int textViewId) {
 
         super(contexto, textViewId);
-        this.messages = new ArrayList<>();
+        this.chatMessages = new ArrayList<>();
     }
 
     @Override
-    public void add(Message message) {
+    public void add(ChatMessage chatMessage) {
 
-        this.messages.add(message);
-        super.add(message);
+        this.chatMessages.add(chatMessage);
+        super.add(chatMessage);
     }
 
     @Override
     public int getCount() {
 
-        return this.messages.size();
+        return this.chatMessages.size();
     }
 
     @Override
-    public Message getItem(int index) {
+    public ChatMessage getItem(int index) {
 
-        return this.messages.get(index);
+        return this.chatMessages.get(index);
     }
 
     @Override
@@ -61,20 +61,20 @@ public class Conversation extends ArrayAdapter<Message> {
 
         LinearLayout itemLayout = (LinearLayout) row.findViewById(R.id.item);
         LinearLayout itemWrapper = (LinearLayout) row.findViewById(R.id.wrapper);
-        TextView itemMessage = (TextView) row.findViewById(R.id.message);
+        TextView itemMessage = (TextView) row.findViewById(R.id.chatMessage);
         TextView itemOwner = (TextView) row.findViewById(R.id.owner);
 
-        Message message = getItem(position);
+        ChatMessage chatMessage = getItem(position);
 
-        boolean sent = (message.getWriter() > 0);
+        boolean sent = (chatMessage.getWriter() > 0);
 
         itemLayout.setGravity((sent ? Gravity.START : Gravity.END));
         itemWrapper.setBackgroundResource(sent ? R.drawable.bubble_yellow : R.drawable.bubble_blue);
         itemWrapper.setGravity((sent ? Gravity.START : Gravity.END));
-        itemMessage.setText(message.getMessage());
+        itemMessage.setText(chatMessage.getMessage());
 
         SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        String date = format.format(new Date(message.getTimestamp()));
+        String date = format.format(new Date(chatMessage.getTimestamp()));
         itemOwner.setText((sent ? "Él" : "Yo" ) + " - " + date);
 
         return row;

@@ -3,13 +3,13 @@ package es.upm.fi.muii.localchat.chat;
 /**
  * Created by Titanium on 22/11/15.
  */
-public class Message {
+public class ChatMessage {
 
     private long idWriter;
     private String message;
     private long timestamp;
 
-    public Message(long idWriter, String message, long timestamp) {
+    public ChatMessage(long idWriter, String message, long timestamp) {
 
         this.idWriter = idWriter;
         this.message = message;

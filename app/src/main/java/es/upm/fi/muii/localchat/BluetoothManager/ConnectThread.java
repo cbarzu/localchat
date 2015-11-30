@@ -5,6 +5,7 @@ package es.upm.fi.muii.localchat.BluetoothManager;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.Handler;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -15,21 +16,23 @@ import java.util.UUID;
 
 
 public class ConnectThread extends Thread{
-    private BluetoothSocket bTSocket;
+
     private static final UUID MY_UUID_INSECURE =  UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     String data;
     BluetoothDevice bTDevice;
+    private BluetoothSocket bTSocket;
+
     public ConnectThread(String data, BluetoothDevice aDevice){
         this.data = data;
         bTDevice = aDevice;
     }
 
-    BluetoothSocket temp = null;
+
     public boolean connect() {
 
         try {
-            temp = bTDevice.createRfcommSocketToServiceRecord(MY_UUID_INSECURE);
+            bTSocket = bTDevice.createRfcommSocketToServiceRecord(MY_UUID_INSECURE);
         } catch (IOException e) {
             Log.d("CONNECTTHREAD", "Could not create RFCOMM socket:" + e.toString());
             return false;
@@ -51,15 +54,22 @@ public class ConnectThread extends Thread{
     public void sendData( ) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream(data.getBytes().length);
         output.write(data.getBytes());
-        OutputStream outputStream = temp.getOutputStream();
+        OutputStream outputStream = bTSocket.getOutputStream();
         outputStream.write(output.toByteArray());
     }
 
     public void run(){
         try {
+            connect();
             sendData();
+            cancel();
         } catch (IOException e) {
             e.printStackTrace();
+            try {
+                bTSocket.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 

@@ -56,7 +56,7 @@ public class DeviceListActivity extends Fragment {
      */
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
-    private BluetoothAdapter bManager;
+    public static BluetoothAdapter bManager;
 
     /**
      * Newly discovered devices
@@ -191,8 +191,7 @@ public class DeviceListActivity extends Fragment {
             Intent intent = new Intent(mainActivity, ChatView.class);
 
             // Set chat parameters key:value (MAC address, etc)
-
-            intent.putExtra(EXTRA_DEVICE_ADDRESS,bManager.getRemoteDevice(address) );
+            intent.putExtra(EXTRA_DEVICE_ADDRESS,address );
             startActivity(intent);
         }
     };
