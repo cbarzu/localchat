@@ -79,6 +79,7 @@ public class DeviceListActivity extends Fragment {
 
         View view = inflater.inflate(R.layout.chat_tab, container, false);
 
+
         mainActivity = getActivity();
         setupBluetooth();
 
@@ -128,6 +129,10 @@ public class DeviceListActivity extends Fragment {
     private void setupBluetooth() {
 
         bManager = BluetoothAdapter.getDefaultAdapter();
+        if (!bManager.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, 3);
+        }
 
         // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -186,7 +191,8 @@ public class DeviceListActivity extends Fragment {
             Intent intent = new Intent(mainActivity, ChatView.class);
 
             // Set chat parameters key:value (MAC address, etc)
-            intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+
+            intent.putExtra(EXTRA_DEVICE_ADDRESS,bManager.getRemoteDevice(address) );
             startActivity(intent);
         }
     };
