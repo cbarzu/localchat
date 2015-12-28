@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item  android:id="@+id/action_send_photo_from_gallery"
+        android:title="@string/send_photo_from_gallery"
+        android:icon="@drawable/inser_photo"
+        app:showAsAction="always"/>
+
+    <item  android:id="@+id/action_take_photo"
+        android:title="@string/send_photo_from_camara"
+        android:icon="@drawable/take_photo"
+        app:showAsAction="always"/>
+
+</menu>

@@ -18,6 +18,8 @@ package es.upm.fi.muii.localchat;
 
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -34,9 +36,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import es.upm.fi.muii.localchat.BluetoothManager.ServerConnectThread;
+import es.upm.fi.muii.localchat.chat.ChatMessage;
 import es.upm.fi.muii.localchat.chat.ChatView;
+import es.upm.fi.muii.localchat.chat.Conversation;
 
 /**
  * This Activity appears as a dialog. It lists any paired devices and
@@ -44,6 +52,7 @@ import es.upm.fi.muii.localchat.chat.ChatView;
  * by the user, the MAC address of the device is sent back to the parent
  * Activity in the result Intent.
  */
+
 public class DeviceListActivity extends Fragment {
 
     /**
@@ -57,6 +66,12 @@ public class DeviceListActivity extends Fragment {
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
     public static BluetoothAdapter bManager;
+    private ServerConnectThread servidor;
+    private Calendar calendar;
+    //private Conversation conversation;
+    public static Map<String, Conversation> conversations;
+
+
 
     /**
      * Newly discovered devices
@@ -67,9 +82,18 @@ public class DeviceListActivity extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
     }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            conversations.get(msg.getData().getString("user")).add((ChatMessage)msg.getData().getSerializable("mensaje_recibido"));
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,6 +106,10 @@ public class DeviceListActivity extends Fragment {
 
         mainActivity = getActivity();
         setupBluetooth();
+        conversations = new HashMap<>();
+        servidor = new ServerConnectThread(DeviceListActivity.bManager , mHandler, getContext());
+        servidor.start();
+        calendar = Calendar.getInstance();
 
         // Set result CANCELED in case the user backs out
         mainActivity.setResult(FragmentActivity.RESULT_CANCELED);
@@ -143,10 +171,6 @@ public class DeviceListActivity extends Fragment {
         mainActivity.registerReceiver(mReceiver, filter);
     }
 
-    /*@Override
-    public void onResume() {
-        doDiscovery();
-    }*/
 
     /**
      * Start device discover with the BluetoothAdapter
@@ -167,7 +191,8 @@ public class DeviceListActivity extends Fragment {
 
         // Unregister broadcast listeners
         mainActivity.unregisterReceiver(mReceiver);
-
+        servidor.closeConnect();
+        servidor.setContinuarToFalse();
         super.onDestroy();
     }
 

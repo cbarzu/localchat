@@ -1,10 +1,18 @@
 package es.upm.fi.muii.localchat;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.FragmentTransaction;
 import android.view.DragEvent;
+
+import java.util.Calendar;
+
+import es.upm.fi.muii.localchat.BluetoothManager.ServerConnectThread;
+import es.upm.fi.muii.localchat.chat.ChatMessage;
+import es.upm.fi.muii.localchat.chat.ChatView;
 
 /**
  * Created by Titanium on 24/11/15.
@@ -12,6 +20,7 @@ import android.view.DragEvent;
 public class MainActivity extends FragmentActivity {
 
     private FragmentTabHost tabHost;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +36,8 @@ public class MainActivity extends FragmentActivity {
                               .setIndicator(getResources().getText(R.string.action_settings).toString()),
                                             SettingsTab.class, null);
         tabHost.addTab(tabHost.newTabSpec("chat_tab")
-                              .setIndicator(getResources().getText(R.string.action_chat).toString()),
-                                            DeviceListActivity.class, null);
+                        .setIndicator(getResources().getText(R.string.action_chat).toString()),
+                DeviceListActivity.class, null);
         tabHost.addTab(tabHost.newTabSpec("profile_tab")
                               .setIndicator(getResources().getText(R.string.action_profile).toString()),
                                             ProfileTab.class, null);
@@ -37,5 +46,9 @@ public class MainActivity extends FragmentActivity {
                                             MapTab.class, null);
 
         ft.commit();
+
+
+
     }
+
 }
