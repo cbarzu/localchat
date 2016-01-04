@@ -30,11 +30,15 @@
     <string name="secure_connect">Connect a device - Secure</string>
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
-    <string name="profile_age">Age</string>
 
     <!-- Profile -->
     <string name="profile_givenname">Name:</string>
     <string name="profile_nickname">Nickname:</string>
     <string name="profile_surname">Last Name:</string>
     <string name="profile_description">Description:</string>
+    <string name="profile_age">Age</string>
+
+    <string name="send_photo_from_gallery">Send photo</string>
+    <string name="send_photo_from_camara">Take photo</string>
+
 </resources>

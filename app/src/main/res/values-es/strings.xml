@@ -27,4 +27,6 @@
     <string name="profile_surname">Apellidos:</string>
     <string name="profile_age">Edad:</string>
     <string name="profile_description">Descripcion:</string>
+    <string name="send_photo_from_camara">Tomar foto</string>
+    <string name="send_photo_from_gallery">Enviar foto</string>
 </resources>
