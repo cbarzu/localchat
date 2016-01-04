@@ -22,4 +22,9 @@
     <string name="action_chat">Chat</string>
     <string name="action_map">Mapa</string>
     <string name="action_profile">Perfil</string>
+    <string name="profile_nickname">Apodo:</string>
+    <string name="profile_givenname">Nombre:</string>
+    <string name="profile_surname">Apellidos:</string>
+    <string name="profile_age">Edad:</string>
+    <string name="profile_description">Descripcion:</string>
 </resources>

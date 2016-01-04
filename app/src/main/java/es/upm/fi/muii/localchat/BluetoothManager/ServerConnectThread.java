@@ -45,7 +45,6 @@ public class ServerConnectThread extends Thread {
     }
 
     public void acceptConnect() {
-        Calendar c = new GregorianCalendar();
 
         byte [] mensaje = new byte[2048];
 
