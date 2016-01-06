@@ -104,12 +104,14 @@ public class Conversation extends ArrayAdapter<ChatMessage> {
         itemOwner.setText((sent ? "Received at " : "Sent at ")  + date);
 
         if (chatMessage.messageType() == 0 ){ //is text message
+
             itemWrapper.setGravity((sent ? Gravity.START : Gravity.END));
             itemMessage.setText((String) chatMessage.getMessage());
             contentForMsg.setBackgroundResource(sent ? R.drawable.bubble_yellow : R.drawable.bubble_blue);
             imageView.setImageResource(android.R.color.transparent);
             imageView.setVisibility(View.INVISIBLE);
             btnAudio.setVisibility(View.INVISIBLE);
+            itemMessage.setVisibility(View.VISIBLE);
 
         }else if ( chatMessage.messageType() == 1) { // its a byte [] photo.
             itemWrapper.setBackgroundResource(android.R.color.transparent);
