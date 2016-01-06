@@ -10,8 +10,10 @@ import android.util.Log;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import es.upm.fi.muii.localchat.chat.ChatMessage;
+import es.upm.fi.muii.localchat.utils.AudioRecorder;
 
 /**
  * Created by claudiu on 15/12/2015.
@@ -39,7 +41,14 @@ public class ManageConnectThread extends Thread {
                 msgRec[i] = mensaje[i];
             }
             ChatMessage readMessage= (ChatMessage)ChatMessage.deserialize(msgRec);
-            //ChatView.conversation.add( new ChatMessage(0L, readMessage, c.getTimeInMillis()));
+            readMessage.setWriter(1);
+            if (readMessage.messageType() == 2) { //is an audio chat
+                Map<String,byte []> audio = (Map<String,byte []>)readMessage.getMessage();
+                String filename = AudioRecorder.writeAudioToFile(audio.get(audio.keySet().iterator().next()));
+                readMessage.setMessage(filename);
+            }
+
+
             // Send the name of the connected device back to the UI Activity
             Message msg = mHandler.obtainMessage();
             Bundle bundle = new Bundle();
