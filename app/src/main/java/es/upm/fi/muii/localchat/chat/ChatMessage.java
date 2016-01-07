@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 public class ChatMessage implements Serializable{
 
+    private static final long serialVersionUID = 123456789L;
     private long idWriter;
     private Object message;
     private long timestamp;
@@ -20,6 +21,15 @@ public class ChatMessage implements Serializable{
         this.idWriter = idWriter;
         this.message = message;
         this.timestamp = timestamp;
+    }
+
+    public void setMessage(Object o){
+        this.message = o;
+    }
+
+
+    public void setWriter(long writer) {
+        this.idWriter = writer;
     }
 
     public long getWriter() {
