@@ -6,6 +6,7 @@
     <string name="action_chat">Chat</string>
     <string name="action_profile">Profile</string>
     <string name="action_map">Map</string>
+    <string name="action_global_chat">Room</string>
 
     <string name="title_activity_chat_view">Chat with </string>
 
@@ -25,6 +26,8 @@
     <string name="title_paired_devices">Paired Devices</string>
     <string name="title_other_devices">Other Available Devices</string>
     <string name="button_scan">Scan for devices</string>
+    <string name="title_chatrooms">Chatrooms</string>
+    <string name="chatroom_name">Global</string>
 
     <!-- Options Menu -->
     <string name="secure_connect">Connect a device - Secure</string>
@@ -40,5 +43,4 @@
 
     <string name="send_photo_from_gallery">Send photo</string>
     <string name="send_photo_from_camara">Take photo</string>
-
 </resources>

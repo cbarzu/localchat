@@ -29,4 +29,7 @@
     <string name="profile_description">Descripcion:</string>
     <string name="send_photo_from_camara">Tomar foto</string>
     <string name="send_photo_from_gallery">Enviar foto</string>
+    <string name="action_global_chat">Sala</string>
+    <string name="title_chatrooms">Salas</string>
+    <string name="chatroom_name">Global</string>
 </resources>

@@ -45,6 +45,7 @@ import es.upm.fi.muii.localchat.BluetoothManager.ServerConnectThread;
 import es.upm.fi.muii.localchat.chat.ChatMessage;
 import es.upm.fi.muii.localchat.chat.ChatView;
 import es.upm.fi.muii.localchat.chat.Conversation;
+import es.upm.fi.muii.localchat.chat.GlobalChatView;
 
 /**
  * This Activity appears as a dialog. It lists any paired devices and
@@ -64,6 +65,7 @@ public class DeviceListActivity extends Fragment {
      * Return Intent extra
      */
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
+    public static String EXTRA_CHATROOM_ID = "chat_global_id";
 
     public static BluetoothAdapter bManager;
     private ServerConnectThread servidor;
@@ -91,7 +93,13 @@ public class DeviceListActivity extends Fragment {
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            conversations.get(msg.getData().getString("user")).add((ChatMessage)msg.getData().getSerializable("mensaje_recibido"));
+            if (msg.getData().getString("chatroom").isEmpty()) {
+
+                conversations.get(msg.getData().getString("user")).add((ChatMessage) msg.getData().getSerializable("mensaje_recibido"));
+            } else {
+
+                conversations.get(msg.getData().getString("chatroom")).add((ChatMessage) msg.getData().getSerializable("mensaje_recibido"));
+            }
         }
     };
 
@@ -113,6 +121,17 @@ public class DeviceListActivity extends Fragment {
 
         // Set result CANCELED in case the user backs out
         mainActivity.setResult(FragmentActivity.RESULT_CANCELED);
+
+        ArrayAdapter<String> chatroomsArrayAdapter =
+                new ArrayAdapter<>(mainActivity, R.layout.device_name);
+
+        String chatroomName = getResources().getText(R.string.chatroom_name).toString();
+        chatroomsArrayAdapter.add(chatroomName);
+
+        // Find and set up the ListView for chatrooms
+        ListView chatroomListView = (ListView) view.findViewById(R.id.chatrooms_list);
+        chatroomListView.setAdapter(chatroomsArrayAdapter);
+        chatroomListView.setOnItemClickListener(mChatroomClickListener);
 
         // Initialize array adapters. One for already paired devices and
         // one for newly discovered devices
@@ -216,7 +235,28 @@ public class DeviceListActivity extends Fragment {
             Intent intent = new Intent(mainActivity, ChatView.class);
 
             // Set chat parameters key:value (MAC address, etc)
-            intent.putExtra(EXTRA_DEVICE_ADDRESS,address );
+            intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            startActivity(intent);
+        }
+    };
+
+    /**
+     * The on-click listener for all chatrooms in the ListViews
+     */
+    private AdapterView.OnItemClickListener mChatroomClickListener
+            = new AdapterView.OnItemClickListener() {
+
+        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+
+            // Cancel discovery because it's costly and we're about to connect
+            bManager.cancelDiscovery();
+
+
+            // Create the result Intent and include the MAC address
+            Intent intent = new Intent(mainActivity, GlobalChatView.class);
+
+            // Set global chat id
+            intent.putExtra(EXTRA_CHATROOM_ID, "chat1");
             startActivity(intent);
         }
     };

@@ -75,26 +75,8 @@ public class Conversation extends ArrayAdapter<ChatMessage> {
         LinearLayout contentForMsg = (LinearLayout) row.findViewById(R.id.contentWithBackground);
         ImageButton btnAudio = (ImageButton) row.findViewById(R.id.controllerAudio);
 
-        btnAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String filename = (String)v.getTag();
-                try {
-                    FileInputStream fs = new FileInputStream(filename);
-                    MediaPlayer mediaPlayer = new MediaPlayer();
-                    mediaPlayer.setDataSource(filename);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-
         ChatMessage chatMessage = getItem(position);
-        boolean sent = (chatMessage.getWriter() > 0);
+        boolean sent = (!chatMessage.getWriter().isEmpty());
 
 
         itemLayout.setGravity((sent ? Gravity.START : Gravity.END));
@@ -108,28 +90,52 @@ public class Conversation extends ArrayAdapter<ChatMessage> {
             itemWrapper.setGravity((sent ? Gravity.START : Gravity.END));
             itemMessage.setText((String) chatMessage.getMessage());
             contentForMsg.setBackgroundResource(sent ? R.drawable.bubble_yellow : R.drawable.bubble_blue);
-            imageView.setImageResource(android.R.color.transparent);
-            imageView.setVisibility(View.INVISIBLE);
-            btnAudio.setVisibility(View.INVISIBLE);
+
+            imageView.setVisibility(View.GONE);
+            btnAudio.setVisibility(View.GONE);
+
             itemMessage.setVisibility(View.VISIBLE);
 
         }else if ( chatMessage.messageType() == 1) { // its a byte [] photo.
             itemWrapper.setBackgroundResource(android.R.color.transparent);
             Bitmap bmp=Bitmap.createScaledBitmap(SerialBitmap.deserialize_bitmap((byte [])chatMessage.getMessage()), 200,200, true);
             imageView.setImageBitmap(bmp);
-            btnAudio.setVisibility(View.INVISIBLE);
-            contentForMsg.setBackgroundResource(android.R.color.transparent);
-        }else if ( chatMessage.messageType() == 2) {
-            itemMessage.setVisibility(View.INVISIBLE);
+
+            itemMessage.setVisibility(View.GONE);
+            btnAudio.setVisibility(View.GONE);
+
+        } else if ( chatMessage.messageType() == 2) { // Audio
+
             itemWrapper.setBackgroundResource(android.R.color.transparent);
-            contentForMsg.setBackgroundResource(android.R.color.transparent);
             btnAudio.setBackgroundResource(android.R.color.transparent);
             btnAudio.setVisibility(View.VISIBLE);
+            btnAudio.setOnClickListener(audioListener);
+
+            itemMessage.setVisibility(View.GONE);
+            imageView.setVisibility(View.GONE);
+
             Map<String,byte []> msg = (Map<String,byte []>)chatMessage.getMessage();
-            imageView.setImageResource(android.R.color.transparent);
+
             String filename = msg.keySet().iterator().next();
             btnAudio.setTag(filename);
         }
         return row;
     }
+
+    private View.OnClickListener audioListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String filename = (String)v.getTag();
+            try {
+                FileInputStream fs = new FileInputStream(filename);
+                MediaPlayer mediaPlayer = new MediaPlayer();
+                mediaPlayer.setDataSource(filename);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
 }
