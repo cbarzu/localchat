@@ -1,13 +1,14 @@
 package es.upm.fi.muii.localchat.chat;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.ContextMenu;
@@ -32,12 +33,12 @@ import es.upm.fi.muii.localchat.R;
 import es.upm.fi.muii.localchat.utils.AudioRecorder;
 import es.upm.fi.muii.localchat.utils.SerialBitmap;
 
-public class ChatView extends FragmentActivity {
+public class GlobalChatView extends FragmentActivity {
 
     private static final int RESULT_LOAD_IMAGE = 100;
     private static final int REQUEST_IMAGE_CAPTURE = 101;
 
-
+    private String chatroomId;
     private EditText editText;
     private ConnectThread cliente;
     private Conversation conversation;
@@ -49,13 +50,13 @@ public class ChatView extends FragmentActivity {
         setContentView(R.layout.activity_chat_view);
 
         Intent intent = getIntent();
-        String user = (String)intent.getStringExtra("device_address");
+        chatroomId = (String)intent.getStringExtra("chat_global_id");
         ListView listView = (ListView) findViewById(R.id.messageList);
-        conversation = DeviceListActivity.conversations.get(user);
+        conversation = DeviceListActivity.conversations.get(chatroomId);
         calendar = Calendar.getInstance();
         if (conversation == null){
             conversation = new Conversation(getApplicationContext(), R.layout.item_conversation);
-            DeviceListActivity.conversations.put(user, conversation);
+            DeviceListActivity.conversations.put(chatroomId, conversation);
         }
 
         listView.setAdapter(conversation);
@@ -122,7 +123,7 @@ public class ChatView extends FragmentActivity {
         switch (item.getItemId()) {
             case R.id.action_send_photo_from_gallery:
                 Intent i = new Intent(
-                        Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i, RESULT_LOAD_IMAGE);
                 return true;
 
@@ -212,10 +213,13 @@ public class ChatView extends FragmentActivity {
 
 
     public void sendMessageOverbluetooth(ChatMessage msg){
-        Intent intent = getIntent();
-        String address =  intent.getStringExtra("device_address");
-        cliente = new ConnectThread(msg, DeviceListActivity.bManager.getRemoteDevice(address));
-        cliente.start();
+
+        for (BluetoothDevice device : DeviceListActivity.bManager.getBondedDevices()) {
+
+            msg.setTarget(chatroomId);
+            cliente = new ConnectThread(msg, device);
+            cliente.start();
+        }
     }
 
 }

@@ -41,7 +41,7 @@ public class ManageConnectThread extends Thread {
                 msgRec[i] = mensaje[i];
             }
             ChatMessage readMessage= (ChatMessage)ChatMessage.deserialize(msgRec);
-            readMessage.setWriter(1);
+            readMessage.setWriter(socket.getRemoteDevice().getAddress());
             if (readMessage.messageType() == 2) { //is an audio chat
                 Map<String,byte []> audio = (Map<String,byte []>)readMessage.getMessage();
                 String filename = AudioRecorder.writeAudioToFile(audio.get(audio.keySet().iterator().next()));
@@ -54,6 +54,8 @@ public class ManageConnectThread extends Thread {
             Bundle bundle = new Bundle();
             bundle.putSerializable("mensaje_recibido", readMessage);
             bundle.putString("user", socket.getRemoteDevice().getAddress());
+            bundle.putString("chatroom", readMessage.getTarget());
+            Log.d("MessageTarget", readMessage.getTarget());
             msg.setData(bundle);
             mHandler.sendMessage(msg);
             Log.d("ManageConnectThread", readMessage.toString());

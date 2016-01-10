@@ -11,30 +11,42 @@ import java.io.Serializable;
 public class ChatMessage implements Serializable{
 
     private static final long serialVersionUID = 123456789L;
-    private long idWriter;
+    private String idWriter;
+    private String target;
     private Object message;
     private long timestamp;
     private int messageType;
 
-    public ChatMessage(long idWriter, Object message, long timestamp, int type) {
+    public ChatMessage(Object message, long timestamp, int type) {
         this.messageType = type;
-        this.idWriter = idWriter;
         this.message = message;
         this.timestamp = timestamp;
+
+        this.idWriter = "";
+        // If empty, personal message
+        this.target = "";
     }
 
     public void setMessage(Object o){
         this.message = o;
     }
 
-
-    public void setWriter(long writer) {
+    public void setWriter(String writer) {
         this.idWriter = writer;
     }
 
-    public long getWriter() {
+    public String getWriter() {
 
         return idWriter;
+    }
+
+    public void setTarget(String target) {
+
+        this.target = target;
+    }
+
+    public String getTarget() {
+        return this.target;
     }
 
     public Object getMessage() {
