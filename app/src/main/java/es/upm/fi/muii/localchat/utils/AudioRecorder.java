@@ -26,7 +26,7 @@ public class AudioRecorder  {
     public AudioRecorder () {
 
         outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LocalchatAudio"+ System.currentTimeMillis()+ ".3gp";
-        myAudioRecorder=new MediaRecorder();
+        myAudioRecorder= new MediaRecorder();
         myAudioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         myAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         myAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
@@ -105,12 +105,14 @@ public class AudioRecorder  {
             f.mkdir();
         }
 
-        String filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LocalchatAudio"+ System.currentTimeMillis()+ ".3gp";
+        String filename = Environment.getExternalStorageDirectory().getAbsolutePath() +
+                                        "/LocalchatAudio/" + System.currentTimeMillis()+ ".3gp";
 
         try {
 
             FileOutputStream fo = new FileOutputStream(filename);
             fo.write(audio);
+            fo.close();
 
             return filename;
 

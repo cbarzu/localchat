@@ -59,7 +59,7 @@ public class GlobalChatView extends FragmentActivity {
         setContentView(R.layout.activity_chat_view);
 
         Intent intent = getIntent();
-        chatroomId = (String)intent.getStringExtra("chat_global_id");
+        chatroomId = (String) intent.getStringExtra("chat_global_id");
         ListView listView = (ListView) findViewById(R.id.messageList);
         conversation = DeviceListActivity.conversations.get(chatroomId);
         calendar = Calendar.getInstance();

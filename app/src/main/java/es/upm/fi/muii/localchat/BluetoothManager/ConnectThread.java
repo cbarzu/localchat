@@ -13,6 +13,8 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 
@@ -53,17 +55,32 @@ public class ConnectThread extends Thread{
     }
 
     public void sendData( ) throws IOException {
+
         OutputStream outputStream = bTSocket.getOutputStream();
-        outputStream.write(NetworkMessage.serialize(data));
+
+        if (bTSocket.isConnected()) {
+            byte [] msg = NetworkMessage.serialize(data);
+            ByteBuffer b = ByteBuffer.allocate(4);
+            b.putInt(msg.length);
+            outputStream.write(b.array());
+            outputStream.flush();
+            outputStream.write(msg);
+            outputStream.flush();
+        }
     }
 
-    public void run(){
+    public void run() {
+
         try {
+
             connect();
             sendData();
             cancel();
+
         } catch (IOException e) {
+
             e.printStackTrace();
+
             try {
                 bTSocket.close();
             } catch (IOException e1) {

@@ -93,12 +93,12 @@ public class Conversation extends ArrayAdapter<NetworkMessage> {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         String date = format.format(new Date(chatMessage.getTimestamp()));
         itemOwner.setText((sent ? "Received at " : "Sent at ")  + date);
+        contentForMsg.setBackgroundResource(sent ? R.drawable.bubble_yellow : R.drawable.bubble_blue);
 
-        if (chatMessage.messageType() == 0 ){ //is text message
+        if (chatMessage.messageType() == 0 ) { //is text message
 
             itemWrapper.setGravity((sent ? Gravity.START : Gravity.END));
             itemMessage.setText((String) chatMessage.getMessage());
-            contentForMsg.setBackgroundResource(sent ? R.drawable.bubble_yellow : R.drawable.bubble_blue);
 
             imageView.setVisibility(View.GONE);
             btnAudio.setVisibility(View.GONE);
@@ -133,9 +133,12 @@ public class Conversation extends ArrayAdapter<NetworkMessage> {
     }
 
     private View.OnClickListener audioListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
+
             String filename = (String)v.getTag();
+
             try {
                 FileInputStream fs = new FileInputStream(filename);
                 MediaPlayer mediaPlayer = new MediaPlayer();
