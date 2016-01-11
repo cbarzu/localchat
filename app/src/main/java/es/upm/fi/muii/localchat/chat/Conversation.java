@@ -1,8 +1,14 @@
+/**
+ * Localchat
+ *
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
+ */
+
 package es.upm.fi.muii.localchat.chat;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,16 +27,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import es.upm.fi.muii.localchat.BluetoothManager.NetworkMessage;
 import es.upm.fi.muii.localchat.R;
+import es.upm.fi.muii.localchat.profile.Profile;
 import es.upm.fi.muii.localchat.utils.SerialBitmap;
 
 /**
  * Created by Titanium on 22/11/15.
  */
-public class Conversation extends ArrayAdapter<ChatMessage> {
+public class Conversation extends ArrayAdapter<NetworkMessage> {
 
-    private List<ChatMessage> chatMessages;
-
+    private List<NetworkMessage> chatMessages;
+    private Profile profile;
+    private int read;
 
     public Conversation(Context contexto, int textViewId) {
 
@@ -39,7 +48,7 @@ public class Conversation extends ArrayAdapter<ChatMessage> {
     }
 
     @Override
-    public void add(ChatMessage chatMessage) {
+    public void add(NetworkMessage chatMessage) {
 
         this.chatMessages.add(chatMessage);
         super.add(chatMessage);
@@ -52,7 +61,7 @@ public class Conversation extends ArrayAdapter<ChatMessage> {
     }
 
     @Override
-    public ChatMessage getItem(int index) {
+    public NetworkMessage getItem(int index) {
 
         return this.chatMessages.get(index);
     }
@@ -75,7 +84,7 @@ public class Conversation extends ArrayAdapter<ChatMessage> {
         LinearLayout contentForMsg = (LinearLayout) row.findViewById(R.id.contentWithBackground);
         ImageButton btnAudio = (ImageButton) row.findViewById(R.id.controllerAudio);
 
-        ChatMessage chatMessage = getItem(position);
+        NetworkMessage chatMessage = getItem(position);
         boolean sent = (!chatMessage.getWriter().isEmpty());
 
 
@@ -93,14 +102,15 @@ public class Conversation extends ArrayAdapter<ChatMessage> {
 
             imageView.setVisibility(View.GONE);
             btnAudio.setVisibility(View.GONE);
-
             itemMessage.setVisibility(View.VISIBLE);
 
-        }else if ( chatMessage.messageType() == 1) { // its a byte [] photo.
-            itemWrapper.setBackgroundResource(android.R.color.transparent);
-            Bitmap bmp=Bitmap.createScaledBitmap(SerialBitmap.deserialize_bitmap((byte [])chatMessage.getMessage()), 200,200, true);
+        } else if (chatMessage.messageType() == 1) { // its a byte [] photo.
+
+            Bitmap bmp = Bitmap.createScaledBitmap(SerialBitmap.deserialize_bitmap((byte []) chatMessage.getMessage()),
+                                                    200,200, true);
             imageView.setImageBitmap(bmp);
 
+            imageView.setVisibility(View.VISIBLE);
             itemMessage.setVisibility(View.GONE);
             btnAudio.setVisibility(View.GONE);
 
@@ -138,4 +148,33 @@ public class Conversation extends ArrayAdapter<ChatMessage> {
 
         }
     };
+
+    public void setProfile(Profile profile) {
+
+        this.profile = profile;
+    }
+
+    public Profile getProfile() {
+
+        return profile;
+    }
+
+    public void pause() {
+
+        read = chatMessages.size();
+    }
+
+    public boolean hasChanged() {
+
+        return read < chatMessages.size();
+    }
+
+    public int unreadCount() {
+
+        if (read < chatMessages.size()) {
+            return chatMessages.size() - read;
+        } else {
+            return 0;
+        }
+    }
 }

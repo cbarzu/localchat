@@ -1,3 +1,9 @@
+/**
+ * Localchat
+ *
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
+ */
 
 package es.upm.fi.muii.localchat.BluetoothManager;
 
@@ -7,12 +13,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import es.upm.fi.muii.localchat.chat.ChatMessage;
+import es.upm.fi.muii.localchat.DeviceListActivity;
+import es.upm.fi.muii.localchat.chat.Conversation;
+import es.upm.fi.muii.localchat.profile.Profile;
 import es.upm.fi.muii.localchat.utils.AudioRecorder;
 
 /**
@@ -31,23 +38,39 @@ public class ManageConnectThread extends Thread {
 
 
     public void run () {
+
         byte [] mensaje = new byte[64000];
         InputStream io = null;
+
         try {
+
             io = socket.getInputStream();
             int longitud = io.read(mensaje);
             byte [] msgRec = new byte[longitud];
+
             for (int i = 0; i < longitud ; i++) {
+
                 msgRec[i] = mensaje[i];
             }
-            ChatMessage readMessage= (ChatMessage)ChatMessage.deserialize(msgRec);
+
+            NetworkMessage readMessage= (NetworkMessage) NetworkMessage.deserialize(msgRec);
             readMessage.setWriter(socket.getRemoteDevice().getAddress());
+
             if (readMessage.messageType() == 2) { //is an audio chat
+
                 Map<String,byte []> audio = (Map<String,byte []>)readMessage.getMessage();
                 String filename = AudioRecorder.writeAudioToFile(audio.get(audio.keySet().iterator().next()));
                 readMessage.setMessage(filename);
             }
+            if (readMessage.messageType() == 3) { // Profile type
 
+                Conversation conv = DeviceListActivity.conversations.get(readMessage.getWriter());
+                if (conv != null) {
+
+                    Profile profile = (Profile) readMessage.getMessage();
+                    conv.setProfile(profile);
+                }
+            }
 
             // Send the name of the connected device back to the UI Activity
             Message msg = mHandler.obtainMessage();

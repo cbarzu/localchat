@@ -1,3 +1,10 @@
+/**
+ * Localchat
+ *
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
+ */
+
 package es.upm.fi.muii.localchat;
 
 import android.os.Bundle;
@@ -6,9 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by Titanium on 17/11/15.
- */
 public class MapTab extends Fragment {
 
     @Override

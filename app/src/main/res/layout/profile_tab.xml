@@ -4,52 +4,42 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <ImageView
+        android:layout_width="159dp"
+        android:layout_height="212dp"
+        android:id="@+id/imageView"
+        android:src="@drawable/silueta"
+        android:layout_gravity="center"/>
+
     <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal">
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <ImageView
-            android:layout_width="159dp"
-            android:layout_height="212dp"
-            android:id="@+id/imageView"
-            android:src="@drawable/silueta"/>
-
-        <LinearLayout
+        android:text="@string/profile_nickname"
+        android:textSize="20dp"
+        android:layout_gravity="center_vertical" />
+        <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/profile_nickname"
-                android:textSize="20dp"
-                android:layout_gravity="center_vertical" />
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/nickname"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_age"
-                    android:textSize="20dp"
-                    android:layout_gravity="center_vertical" />
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/age"/>
-            </LinearLayout>
-        </LinearLayout>
+            android:id="@+id/nickname"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/profile_age"
+            android:textSize="20dp"
+            android:layout_gravity="center_vertical" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/age"/>
     </LinearLayout>
 
     <LinearLayout

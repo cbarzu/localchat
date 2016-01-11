@@ -1,3 +1,10 @@
+/**
+ * Localchat
+ *
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
+ */
+
 package es.upm.fi.muii.localchat.chat;
 
 import android.bluetooth.BluetoothDevice;
@@ -28,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import es.upm.fi.muii.localchat.BluetoothManager.ConnectThread;
+import es.upm.fi.muii.localchat.BluetoothManager.NetworkMessage;
 import es.upm.fi.muii.localchat.DeviceListActivity;
 import es.upm.fi.muii.localchat.R;
 import es.upm.fi.muii.localchat.utils.AudioRecorder;
@@ -46,6 +54,7 @@ public class GlobalChatView extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_view);
 
@@ -54,7 +63,9 @@ public class GlobalChatView extends FragmentActivity {
         ListView listView = (ListView) findViewById(R.id.messageList);
         conversation = DeviceListActivity.conversations.get(chatroomId);
         calendar = Calendar.getInstance();
-        if (conversation == null){
+
+        if (conversation == null) {
+
             conversation = new Conversation(getApplicationContext(), R.layout.item_conversation);
             DeviceListActivity.conversations.put(chatroomId, conversation);
         }
@@ -88,7 +99,7 @@ public class GlobalChatView extends FragmentActivity {
                     if (b != null){
                         Map<String, byte []> audio = new HashMap<>(1);
                         audio.put(filename, b);
-                        ChatMessage msg =  new ChatMessage(audio  , calendar.getTimeInMillis(),2);
+                        NetworkMessage msg =  new NetworkMessage(audio  , calendar.getTimeInMillis(),2);
                         conversation.add(msg);
                         sendMessageOverbluetooth(msg);
                     }
@@ -97,30 +108,32 @@ public class GlobalChatView extends FragmentActivity {
             }
         });
 
-
         setupWatcher(editText, sendButton);
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.chat_menu, menu);
+        inflater.inflate(R.menu.chat_global_menu, menu);
         return true;
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
+
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.chat_menu, menu);
+        inflater.inflate(R.menu.chat_global_menu, menu);
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
+
             case R.id.action_send_photo_from_gallery:
                 Intent i = new Intent(
                         Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -146,7 +159,7 @@ public class GlobalChatView extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ChatMessage msg = null;
+        NetworkMessage msg = null;
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
@@ -158,19 +171,18 @@ public class GlobalChatView extends FragmentActivity {
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
-            msg =  new ChatMessage(SerialBitmap.serialize_bitmap(BitmapFactory.decodeFile(picturePath)), calendar.getTimeInMillis(), 1);
+            msg =  new NetworkMessage(SerialBitmap.serialize_bitmap(BitmapFactory.decodeFile(picturePath)), calendar.getTimeInMillis(), 1);
             conversation.add(msg);
 
         }else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && null != data){
 
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            msg = new ChatMessage(SerialBitmap.serialize_bitmap(imageBitmap), calendar.getTimeInMillis(), 1);
+            msg = new NetworkMessage(SerialBitmap.serialize_bitmap(imageBitmap), calendar.getTimeInMillis(), 1);
             conversation.add(msg);
 
         }
         sendMessageOverbluetooth(msg);
-
 
     }
 
@@ -190,16 +202,14 @@ public class GlobalChatView extends FragmentActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
     }
 
-
     public void sendMessage(View button) {
 
         if (editText.getText().length() > 0) {
-            ChatMessage msg =  new ChatMessage(editText.getText().toString(), calendar.getTimeInMillis(),0);
+            NetworkMessage msg =  new NetworkMessage(editText.getText().toString(), calendar.getTimeInMillis(),0);
             conversation.add(msg);
 
             sendMessageOverbluetooth(msg);
@@ -207,12 +217,17 @@ public class GlobalChatView extends FragmentActivity {
         editText.setText("");
     }
 
+    protected void onPause() {
+
+        conversation.pause();
+        super.onPause();
+    }
+
     public void onDestroy(){
         super.onDestroy();
     }
 
-
-    public void sendMessageOverbluetooth(ChatMessage msg){
+    public void sendMessageOverbluetooth(NetworkMessage msg){
 
         for (BluetoothDevice device : DeviceListActivity.bManager.getBondedDevices()) {
 
@@ -221,5 +236,4 @@ public class GlobalChatView extends FragmentActivity {
             cliente.start();
         }
     }
-
 }

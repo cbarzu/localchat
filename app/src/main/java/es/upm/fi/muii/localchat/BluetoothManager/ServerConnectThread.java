@@ -1,8 +1,12 @@
+/**
+ * Localchat
+ *
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
+ */
+
 package es.upm.fi.muii.localchat.BluetoothManager;
 
-/**
- * Created by claudiu on 29/11/2015.
- */
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
@@ -15,7 +19,6 @@ import android.os.Handler;
 import es.upm.fi.muii.localchat.DeviceListActivity;
 import es.upm.fi.muii.localchat.R;
 import es.upm.fi.muii.localchat.chat.Conversation;
-
 
 /**
  * Created by me on 6/5/2015.
@@ -31,9 +34,11 @@ public class ServerConnectThread extends Thread {
 
     public ServerConnectThread(BluetoothAdapter bTAdapter, Handler h, Context context){
         try {
+
             temp = bTAdapter.listenUsingRfcommWithServiceRecord("Service_Name", MY_UUID_INSECURE);
             mHandler = h;
             this.context = context;
+
         } catch (IOException e) {
             e.printStackTrace();
         }

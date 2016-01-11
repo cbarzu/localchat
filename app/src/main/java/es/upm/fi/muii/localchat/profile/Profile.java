@@ -1,3 +1,10 @@
+/**
+ * Localchat
+ *
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
+ */
+
 package es.upm.fi.muii.localchat.profile;
 
 import java.io.Serializable;
@@ -7,21 +14,15 @@ import java.io.Serializable;
  */
 public class Profile implements Serializable {
 
-    private String networkAddress;
     private String nickname;
-    private int age;
+    private String age;
     private String surename;
     private String givenname;
     private String description;
 
-    public Profile(String networkAddress, String nickname) {
+    public Profile(String nickname) {
 
-        this.networkAddress = networkAddress;
         this.nickname = nickname;
-    }
-
-    public String getNetworkAddress() {
-        return networkAddress;
     }
 
     public String getNickname() {
@@ -36,7 +37,7 @@ public class Profile implements Serializable {
         return surename;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
@@ -52,7 +53,7 @@ public class Profile implements Serializable {
         this.surename = surename;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
     }
 

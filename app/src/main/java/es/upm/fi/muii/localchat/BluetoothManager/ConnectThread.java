@@ -1,29 +1,30 @@
+/**
+ * Localchat
+ *
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
+ */
+
 package es.upm.fi.muii.localchat.BluetoothManager;
-
-
-// Unique UUID for this application
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
-
-import es.upm.fi.muii.localchat.chat.ChatMessage;
 
 
 public class ConnectThread extends Thread{
 
     private static final UUID MY_UUID_INSECURE =  UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
-    private ChatMessage data;
+    private NetworkMessage data;
     BluetoothDevice bTDevice;
     private BluetoothSocket bTSocket;
 
-    public ConnectThread(ChatMessage data, BluetoothDevice aDevice){
+    public ConnectThread(NetworkMessage data, BluetoothDevice aDevice){
         this.data = data;
         bTDevice = aDevice;
     }
@@ -53,7 +54,7 @@ public class ConnectThread extends Thread{
 
     public void sendData( ) throws IOException {
         OutputStream outputStream = bTSocket.getOutputStream();
-        outputStream.write(ChatMessage.serialize(data));
+        outputStream.write(NetworkMessage.serialize(data));
     }
 
     public void run(){

@@ -32,4 +32,11 @@
     <string name="action_global_chat">Sala</string>
     <string name="title_chatrooms">Salas</string>
     <string name="chatroom_name">Global</string>
+    <string name="watch_profile">Ver Perfil</string>
+    <string name="profile_title">Perfil</string>
+    <string name="profile_not_found">Perfil actualmente no disponible</string>
+    <string name="show_profile">Mostrar Perfil</string>
+    <string name="show_profile_description">Permite que otros usuarios vean tu perfil</string>
+    <string name="record_end_message">Grabacion completada</string>
+    <string name="speak_now_message">Hable ahora</string>
 </resources>
