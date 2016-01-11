@@ -1,17 +1,8 @@
-/*
- * Copyright (C) 2014 The Android Open Source Project
+/**
+ * Localchat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
  */
 
 package es.upm.fi.muii.localchat;
@@ -35,17 +26,21 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.content.SharedPreferences;
+import java.util.ArrayList;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import es.upm.fi.muii.localchat.BluetoothManager.ConnectThread;
 import es.upm.fi.muii.localchat.BluetoothManager.ServerConnectThread;
-import es.upm.fi.muii.localchat.chat.ChatMessage;
+import es.upm.fi.muii.localchat.BluetoothManager.NetworkMessage;
 import es.upm.fi.muii.localchat.chat.ChatView;
 import es.upm.fi.muii.localchat.chat.Conversation;
 import es.upm.fi.muii.localchat.chat.GlobalChatView;
+import es.upm.fi.muii.localchat.profile.Profile;
 
 /**
  * This Activity appears as a dialog. It lists any paired devices and
@@ -95,10 +90,10 @@ public class DeviceListActivity extends Fragment {
         public void handleMessage(Message msg) {
             if (msg.getData().getString("chatroom").isEmpty()) {
 
-                conversations.get(msg.getData().getString("user")).add((ChatMessage) msg.getData().getSerializable("mensaje_recibido"));
+                conversations.get(msg.getData().getString("user")).add((NetworkMessage) msg.getData().getSerializable("mensaje_recibido"));
             } else {
 
-                conversations.get(msg.getData().getString("chatroom")).add((ChatMessage) msg.getData().getSerializable("mensaje_recibido"));
+                conversations.get(msg.getData().getString("chatroom")).add((NetworkMessage) msg.getData().getSerializable("mensaje_recibido"));
             }
         }
     };
@@ -191,12 +186,45 @@ public class DeviceListActivity extends Fragment {
     }
 
 
+private void shareProfile() {
+
+    Log.d("Chat", "Sharing profile");
+    for (BluetoothDevice device : bManager.getBondedDevices()) {
+
+        SharedPreferences myPrefs = getActivity().getSharedPreferences("localchat-profile", Context.MODE_PRIVATE);
+        Profile profile = new Profile(myPrefs.getString("profile-nickname", bManager.getName()));
+        profile.setSurename(myPrefs.getString("profile-surname", ""));
+        profile.setGivenname(myPrefs.getString("profile-givenname", ""));
+        profile.setAge(myPrefs.getString("profile-age", ""));
+        profile.setDescription(myPrefs.getString("profile-description", ""));
+
+        NetworkMessage msg = new NetworkMessage(profile, System.currentTimeMillis(), 3);
+        ConnectThread client = new ConnectThread(msg, device);
+        client.start();
+    }
+}
+
     /**
      * Start device discover with the BluetoothAdapter
      */
     private void doDiscovery() {
 
         bManager.startDiscovery();
+    }
+
+
+    @Override
+    public void onPause() {
+
+        shareProfile();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        shareProfile();
     }
 
     @Override
@@ -214,7 +242,6 @@ public class DeviceListActivity extends Fragment {
         servidor.setContinuarToFalse();
         super.onDestroy();
     }
-
 
     /**
      * The on-click listener for all devices in the ListViews
