@@ -83,10 +83,11 @@ public class AudioRecorder  {
         if (!f.exists()){
             f.mkdir();
         }
-        String filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LocalchatAudio"+ System.currentTimeMillis()+ ".3gp";
+        String filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LocalchatAudio/"+ System.currentTimeMillis()+ ".3gp";
         try {
             FileOutputStream fo = new FileOutputStream(filename);
             fo.write(audio);
+            fo.close();
             return filename;
         } catch (FileNotFoundException e) {
             e.printStackTrace();

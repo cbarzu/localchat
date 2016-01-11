@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import es.upm.fi.muii.localchat.chat.ChatMessage;
@@ -38,7 +39,7 @@ public class ManageConnectThread extends Thread {
         try {
             io = socket.getInputStream();
 
-            byte [] longitudBytes = new byte[16];
+            byte [] longitudBytes = new byte[4];
             io.read(longitudBytes);
             int longitud = new BigInteger(longitudBytes).intValue();
             int read = 0;
@@ -53,11 +54,14 @@ public class ManageConnectThread extends Thread {
             ChatMessage readMessage= (ChatMessage)ChatMessage.deserialize(msgRec);
             readMessage.setWriter(socket.getRemoteDevice().getAddress());
             if (readMessage.messageType() == 2) { //is an audio chat
+                
                 Map<String,byte []> audio = (Map<String,byte []>)readMessage.getMessage();
                 String filename = AudioRecorder.writeAudioToFile(audio.get(audio.keySet().iterator().next()));
-                readMessage.setMessage(filename);
-            }
 
+                audio = new HashMap<>(1);
+                audio.put(filename, null);
+                readMessage.setMessage(audio);
+            }
 
             // Send the name of the connected device back to the UI Activity
             Message msg = mHandler.obtainMessage();
