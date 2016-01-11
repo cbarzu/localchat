@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import es.upm.fi.muii.localchat.chat.ChatMessage;
@@ -56,7 +57,9 @@ public class ConnectThread extends Thread{
         OutputStream outputStream = bTSocket.getOutputStream();
         if (bTSocket.isConnected()) {
             byte [] msg = ChatMessage.serialize(data);
-            outputStream.write(BigInteger.valueOf(msg.length).toByteArray());
+            ByteBuffer b = ByteBuffer.allocate(4);
+            b.putInt(msg.length);
+            outputStream.write(b.array());
             outputStream.flush();
             outputStream.write(msg);
             outputStream.flush();

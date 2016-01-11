@@ -38,7 +38,7 @@ public class ManageConnectThread extends Thread {
         try {
             io = socket.getInputStream();
 
-            byte [] longitudBytes = new byte[4];
+            byte [] longitudBytes = new byte[16];
             io.read(longitudBytes);
             int longitud = new BigInteger(longitudBytes).intValue();
             int read = 0;
