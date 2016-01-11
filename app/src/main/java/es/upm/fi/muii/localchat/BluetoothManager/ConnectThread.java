@@ -10,6 +10,7 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.UUID;
 
 import es.upm.fi.muii.localchat.chat.ChatMessage;
@@ -53,7 +54,13 @@ public class ConnectThread extends Thread{
 
     public void sendData( ) throws IOException {
         OutputStream outputStream = bTSocket.getOutputStream();
-        outputStream.write(ChatMessage.serialize(data));
+        if (bTSocket.isConnected()) {
+            byte [] msg = ChatMessage.serialize(data);
+            outputStream.write(BigInteger.valueOf(msg.length).toByteArray());
+            outputStream.flush();
+            outputStream.write(msg);
+            outputStream.flush();
+        }
     }
 
     public void run(){

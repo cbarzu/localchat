@@ -10,6 +10,8 @@ import android.util.Log;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import es.upm.fi.muii.localchat.chat.ChatMessage;
@@ -35,7 +37,15 @@ public class ManageConnectThread extends Thread {
         InputStream io = null;
         try {
             io = socket.getInputStream();
-            int longitud = io.read(mensaje);
+
+            byte [] longitudBytes = new byte[4];
+            io.read(longitudBytes);
+            int longitud = new BigInteger(longitudBytes).intValue();
+            int read = 0;
+            while (read < longitud) {
+
+                read += io.read(mensaje, read, longitud-read);
+            }
             byte [] msgRec = new byte[longitud];
             for (int i = 0; i < longitud ; i++) {
                 msgRec[i] = mensaje[i];
