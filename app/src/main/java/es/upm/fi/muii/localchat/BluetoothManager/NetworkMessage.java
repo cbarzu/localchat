@@ -1,4 +1,11 @@
-package es.upm.fi.muii.localchat.chat;
+/**
+ * Localchat
+ *
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
+ */
+
+package es.upm.fi.muii.localchat.BluetoothManager;
 
 
 import java.io.ByteArrayInputStream;
@@ -8,7 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class ChatMessage implements Serializable{
+public class NetworkMessage implements Serializable {
 
     private static final long serialVersionUID = 123456789L;
     private String idWriter;
@@ -17,7 +24,7 @@ public class ChatMessage implements Serializable{
     private long timestamp;
     private int messageType;
 
-    public ChatMessage(Object message, long timestamp, int type) {
+    public NetworkMessage(Object message, long timestamp, int type) {
         this.messageType = type;
         this.message = message;
         this.timestamp = timestamp;

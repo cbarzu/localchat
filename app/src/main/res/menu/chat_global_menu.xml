@@ -11,9 +11,4 @@
         android:title="@string/send_photo_from_camara"
         android:icon="@drawable/take_photo"
         app:showAsAction="always"/>
-
-    <item  android:id="@+id/watch_profile"
-        android:title="@string/watch_profile"
-        android:icon="@drawable/profile_icon"
-        app:showAsAction="always"/>
 </menu>

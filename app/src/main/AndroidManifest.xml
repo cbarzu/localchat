@@ -36,6 +36,10 @@
             android:name=".chat.GlobalChatView"
             android:label="@string/chatroom_name" >
         </activity>
+        <activity
+            android:name=".profile.ProfileView"
+            android:label="@string/profile_title" >
+        </activity>
     </application>
 
 </manifest>

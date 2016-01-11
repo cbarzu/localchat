@@ -1,3 +1,9 @@
+/**
+ * Localchat
+ *
+ * @author Ignacio Molina Cuquerella
+ * @author Claudiu Barzu
+ */
 
 package es.upm.fi.muii.localchat.BluetoothManager;
 
@@ -7,15 +13,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import es.upm.fi.muii.localchat.chat.ChatMessage;
+import es.upm.fi.muii.localchat.DeviceListActivity;
+import es.upm.fi.muii.localchat.chat.Conversation;
+import es.upm.fi.muii.localchat.profile.Profile;
 import es.upm.fi.muii.localchat.utils.AudioRecorder;
 
 /**
@@ -34,8 +40,11 @@ public class ManageConnectThread extends Thread {
 
 
     public void run () {
+
         InputStream io = null;
+
         try {
+
             io = socket.getInputStream();
 
             byte [] longitudBytes = new byte[4];
@@ -48,8 +57,10 @@ public class ManageConnectThread extends Thread {
                 read += io.read(mensaje, read, longitud-read);
             }
 
-            ChatMessage readMessage= (ChatMessage)ChatMessage.deserialize(mensaje);
+            NetworkMessage readMessage= (NetworkMessage)NetworkMessage.deserialize(mensaje);
+
             readMessage.setWriter(socket.getRemoteDevice().getAddress());
+
             if (readMessage.messageType() == 2) { //is an audio chat
 
                 Map<String,byte []> audio = (Map<String,byte []>)readMessage.getMessage();
@@ -58,6 +69,16 @@ public class ManageConnectThread extends Thread {
                 audio = new HashMap<>(1);
                 audio.put(filename, null);
                 readMessage.setMessage(audio);
+            }
+            if (readMessage.messageType() == 3) { // Profile type
+
+                Conversation conv = DeviceListActivity.conversations.get(readMessage.getWriter());
+                if (conv != null) {
+
+                    Profile profile = (Profile) readMessage.getMessage();
+                    conv.setProfile(profile);
+                }
+
             }
 
             // Send the name of the connected device back to the UI Activity
