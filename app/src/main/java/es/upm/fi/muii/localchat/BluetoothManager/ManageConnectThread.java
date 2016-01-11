@@ -34,7 +34,6 @@ public class ManageConnectThread extends Thread {
 
 
     public void run () {
-        byte [] mensaje = new byte[64000];
         InputStream io = null;
         try {
             io = socket.getInputStream();
@@ -42,19 +41,17 @@ public class ManageConnectThread extends Thread {
             byte [] longitudBytes = new byte[4];
             io.read(longitudBytes);
             int longitud = new BigInteger(longitudBytes).intValue();
+            byte [] mensaje = new byte[longitud];
             int read = 0;
             while (read < longitud) {
 
                 read += io.read(mensaje, read, longitud-read);
             }
-            byte [] msgRec = new byte[longitud];
-            for (int i = 0; i < longitud ; i++) {
-                msgRec[i] = mensaje[i];
-            }
-            ChatMessage readMessage= (ChatMessage)ChatMessage.deserialize(msgRec);
+
+            ChatMessage readMessage= (ChatMessage)ChatMessage.deserialize(mensaje);
             readMessage.setWriter(socket.getRemoteDevice().getAddress());
             if (readMessage.messageType() == 2) { //is an audio chat
-                
+
                 Map<String,byte []> audio = (Map<String,byte []>)readMessage.getMessage();
                 String filename = AudioRecorder.writeAudioToFile(audio.get(audio.keySet().iterator().next()));
 
